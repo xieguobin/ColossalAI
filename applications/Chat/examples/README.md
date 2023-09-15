@@ -90,6 +90,7 @@ You can use the following cmd to generate conversation dataset.
 python generate_conversation_dataset.py \
     --dataset "All"
     --save_path "/path/to/dataset"
+python generate_conversation_dataset.py --dataset "All" --save_path "dataset/test.json"    
 ```
 
 ## Stage1 - Supervised instructs tuning
@@ -102,12 +103,13 @@ You can run the `examples/train_sft.sh` to start a supervised instructs fine-tun
 You can also use the following cmd to start a supervised instructs fine-tuning with your own settings.
 
 ```bash
-torchrun --standalone --nproc_per_node=4 train_sft.py \
-    --pretrain "/path/to/LLaMa-7B/" \
+ModuleNotFoundError: No module named 'coati'
+torchrun --standalone --nproc_per_node=8 examples/train_sft.py \
+    --pretrain "/data-ai/model/llama2/llama2_hf/Llama-2-7b-hf/" \
     --model 'llama' \
     --strategy colossalai_zero2 \
-    --save_path  /path/to/Coati-7B \
-    --dataset /path/to/data.json \
+    --save_path  /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/Coati-7B \
+    --dataset /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/InstructionWild/data/instinwild_en.json \
     --batch_size 4 \
     --accumulation_steps 8 \
     --lr 2e-5 \
