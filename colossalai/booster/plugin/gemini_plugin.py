@@ -27,7 +27,7 @@ from colossalai.zero.gemini.memory_tracer import MemStats
 
 from .dp_plugin_base import DPPluginBase
 
-__all__ = ['GeminiPlugin']
+__all__ = ['GeminiPlugin','GeminiModel']
 
 SUPPORTED_PRECISION = ['fp16', 'bf16']
 PRECISION_STR_TO_DTYPE = {'fp16': torch.half, 'bf16': torch.bfloat16}

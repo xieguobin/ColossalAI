@@ -90,7 +90,7 @@ You can use the following cmd to generate conversation dataset.
 python generate_conversation_dataset.py \
     --dataset "All"
     --save_path "/path/to/dataset"
-python generate_conversation_dataset.py --dataset "All" --save_path "dataset/test.json"    
+python generate_conversation_dataset.py --dataset "All" --save_path "dataset/test.json" 
 ```
 
 ## Stage1 - Supervised instructs tuning
@@ -104,11 +104,16 @@ You can also use the following cmd to start a supervised instructs fine-tuning w
 
 ```bash
 ModuleNotFoundError: No module named 'coati'
-torchrun --standalone --nproc_per_node=8 examples/train_sft.py \
-    --pretrain "/data-ai/model/llama2/llama2_hf/Llama-2-7b-hf/" \
-    --model 'llama' \
+import sys
+sys.path.append('/data-ai/usr/xieguobin/ColossalAI/applications/Chat')
+sys.path.append('/data-ai/usr/xieguobin/ColossalAI/applications')
+sys.path.append('/data-ai/usr/xieguobin/ColossalAI')
+
+torchrun --standalone --nproc_per_node=8 train_sft.py \
+    --pretrain "bigscience/bloom-560m" \
+    --model 'bloom' \
     --strategy colossalai_zero2 \
-    --save_path  /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/Coati-7B \
+    --save_path  /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/Coati-7B1 \
     --dataset /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/InstructionWild/data/instinwild_en.json \
     --batch_size 4 \
     --accumulation_steps 8 \
@@ -155,12 +160,18 @@ You can run the `examples/train_rm.sh` to start a reward model training.
 You can also use the following cmd to start training a reward model.
 
 ```bash
-torchrun --standalone --nproc_per_node=4 train_reward_model.py \
-    --pretrain "/path/to/LLaMa-7B/" \
+torchrun --standalone --nproc_per_node=8 train_reward_model.py \
+    --pretrain "Coati-7B" \
     --model 'llama' \
     --strategy colossalai_zero2 \
     --loss_fn 'log_exp'\
-    --save_path 'rmstatic.pt' \
+    --save_path 'rmstatic.pt'   ###不跑这段
+
+torchrun --standalone --nproc_per_node=2 train_reward_model.py \
+    --model 'bloom' \
+    --strategy colossalai_zero2 \
+    --loss_fn 'log_sig' \
+    --dataset 'Anthropic/hh-rlhf'    
 ```
 
 ### Features and tricks in RM training
@@ -214,7 +225,9 @@ You can run the `examples/train_prompts.sh` to start PPO training.
 You can also use the cmd following to start PPO training.
 [[Stage3 tutorial video]](https://www.youtube.com/watch?v=Z8wwSHxPL9g)
 
-```bash
+```bash  
+python generate_prompt_dataset.py --dataset_path InstructionWild/data/instinwild_en.json --save_path dataset/sample.csv --sample_size 100  
+
 torchrun --standalone --nproc_per_node=4 train_prompts.py \
     --pretrain "/path/to/LLaMa-7B/" \
     --model 'llama' \
@@ -223,6 +236,13 @@ torchrun --standalone --nproc_per_node=4 train_prompts.py \
     --pretrain_dataset /path/to/your/pretrain_dataset \
     --rm_pretrain /your/pretrain/rm/definition \
     --rm_path /your/rm/model/path
+
+torchrun --standalone --nproc_per_node=2 train_prompts.py \
+    --pretrain "bigscience/bloom-560m" \
+    --model 'bloom' \
+    --strategy colossalai_zero2 \
+    --prompt_dataset dataset/sample.csv \
+    --pretrain_dataset InstructionWild/data/instinwild_en.json  
 ```
 
 Prompt dataset: the instruction dataset mentioned in the above figure which includes the instructions, e.g. you can use the [script](https://github.com/hpcaitech/ColossalAI/tree/main/applications/Chat/examples/generate_prompt_dataset.py) which samples `instinwild_en.json` or `instinwild_ch.json` in [InstructionWild](https://github.com/XueFuzhao/InstructionWild/tree/main/data#instructwild-data) to generate the prompt dataset.

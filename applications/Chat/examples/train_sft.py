@@ -2,6 +2,9 @@ import argparse
 import math
 import warnings
 
+import sys
+sys.path.append('/data-ai/usr/xieguobin/ColossalAI/applications/Chat')
+
 import torch
 import torch.distributed as dist
 from coati.dataset import SFTDataset, SupervisedDataset
