@@ -90,6 +90,7 @@ You can use the following cmd to generate conversation dataset.
 python generate_conversation_dataset.py \
     --dataset "All"
     --save_path "/path/to/dataset"
+    
 python generate_conversation_dataset.py --dataset "All" --save_path "dataset/test.json" 
 ```
 
@@ -113,8 +114,8 @@ torchrun --standalone --nproc_per_node=8 train_sft.py \
     --pretrain "bigscience/bloom-560m" \
     --model 'bloom' \
     --strategy colossalai_zero2 \
-    --save_path  /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/Coati-7B1 \
-    --dataset /data-ai/usr/xieguobin/ColossalAI/applications/Chat/examples/InstructionWild/data/instinwild_en.json \
+    --save_path  Coati-7B1 \
+    --dataset InstructionWild/data/instinwild_en.json \
     --batch_size 4 \
     --accumulation_steps 8 \
     --lr 2e-5 \

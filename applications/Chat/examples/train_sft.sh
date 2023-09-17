@@ -15,15 +15,28 @@ set_n_least_used_CUDA_VISIBLE_DEVICES() {
 
 set_n_least_used_CUDA_VISIBLE_DEVICES 4
 
-torchrun --standalone --nproc_per_node=4 train_sft.py \
-    --pretrain "/path/to/LLaMa-7B/" \
-    --model 'llama' \
+#torchrun --standalone --nproc_per_node=4 train_sft.py \
+#    --pretrain "/path/to/LLaMa-7B/" \
+#    --model 'llama' \
+#    --strategy colossalai_zero2 \
+#    --log_interval 10 \
+#    --save_path /path/to/Coati-7B \
+#    --dataset /path/to/data.json \
+#    --batch_size 4 \
+#    --accumulation_steps 8 \
+#    --lr 2e-5 \
+#    --max_datasets_size 512 \
+#    --max_epochs 1
+
+torchrun --standalone --nproc_per_node=8 train_sft.py \
+    --pretrain "bigscience/bloom-560m" \
+    --model 'bloom' \
     --strategy colossalai_zero2 \
-    --log_interval 10 \
-    --save_path /path/to/Coati-7B \
-    --dataset /path/to/data.json \
+    --save_path  Coati-7B1 \
+    --dataset InstructionWild/data/instinwild_en.json \
     --batch_size 4 \
     --accumulation_steps 8 \
     --lr 2e-5 \
     --max_datasets_size 512 \
-    --max_epochs 1
+    --max_epochs 1 \
+    --grad_checkpoint

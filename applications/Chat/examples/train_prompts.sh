@@ -17,9 +17,16 @@ set_n_least_used_CUDA_VISIBLE_DEVICES 2
 
 # torchrun --standalone --nproc_per_node=2 train_prompts.py prompts.csv --strategy colossalai_zero2
 
+#torchrun --standalone --nproc_per_node=2 train_prompts.py \
+#    --pretrain_dataset /path/to/data.json \
+#    --prompt_dataset /path/to/data.json \
+#    --strategy colossalai_zero2 \
+#    --num_episodes 1 --num_collect_steps 2 --num_update_steps 1 \
+#    --train_batch_size 2
+
 torchrun --standalone --nproc_per_node=2 train_prompts.py \
-    --pretrain_dataset /path/to/data.json \
-    --prompt_dataset /path/to/data.json \
+    --pretrain "bigscience/bloom-560m" \
+    --model 'bloom' \
     --strategy colossalai_zero2 \
-    --num_episodes 1 --num_collect_steps 2 --num_update_steps 1 \
-    --train_batch_size 2
+    --prompt_dataset dataset/sample.csv \
+    --pretrain_dataset InstructionWild/data/instinwild_en.json
